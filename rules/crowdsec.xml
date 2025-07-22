@@ -1,9 +1,9 @@
 <!--
 -Rules: CrowdSec
--Author: Killian Prin-Abeil
+-Author: Killian Prin-abeil
 -Enterprise : Aukfood
 -Date : 30/08/2024
--Updated : 16/07/2025
+-Updated : 22/07/2025
 -->
 <group name="crowdsec,">
 	<rule id="100000" level="12">
