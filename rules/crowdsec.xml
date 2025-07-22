@@ -502,4 +502,20 @@ NEXTCLOUD EVENT
 <!--
 PERSONNAL EVENT
 -->
+	<rule id="101001" level="12">
+		<if_sid>100000</if_sid>
+		<field name="crowdsec.alert.scenario">aukfood/ia-aggressive-crawler-ip-ban</field>
+		<mitre>
+			<id>T1595</id>
+		</mitre>
+		<description>CrowdSec alert: $(crowdsec.alert.scenario)</description>
+	</rule>
+		<rule id="101002" level="12">
+		<if_sid>100000</if_sid>
+		<field name="crowdsec.alert.scenario">aukfood/ban-ip-range-bot</field>
+		<mitre>
+			<id>T1595</id>
+		</mitre>
+		<description>CrowdSec alert: $(crowdsec.alert.scenario)</description>
+	</rule>
 </group>
