@@ -9,6 +9,16 @@
     <field name="file">/tmp/yara/malware/</field>
     <description>File added to /tmp/yara/malware/ directory.</description>
   </rule>
+  <rule id="110302" level="7">
+    <if_sid>550</if_sid>
+    <field name="file">/root/</field>
+    <description>File modified in /root/ directory.</description>
+  </rule>
+  <rule id="110303" level="7">
+    <if_sid>554</if_sid>
+    <field name="file">/root/</field>
+    <description>File added to /root/ directory.</description>
+  </rule>
 </group>
 
 <group name="yara,">
