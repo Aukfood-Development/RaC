@@ -22,7 +22,7 @@
 
   <!-- Vulnérabilité de sévérité élevée -->
   <rule id="120103" level="12">
-    <if_sid>100101</if_sid>
+    <if_sid>120101</if_sid>
     <field name="severity">High</field>
     <description>Grype alert [High]: Vulnerabilty '$(vulnerability_id)' detected in package '$(package)' version '$(version)' on container image '$(image)'.</description>
   </rule>
