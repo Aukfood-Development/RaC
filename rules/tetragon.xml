@@ -20,4 +20,11 @@
  <group>process_kprobe,</group>
  <description>Kernel probe detected.</description>
   </rule>
+  </rule>
+  <rule id="700003" level="0">
+    <if_sid>700002</if_sid>
+    <description>Suppressing a specific alert.</description>
+    <decoded_as>json</decoded_as>
+    <field name="process_kprobe.parent.binary">/usr/lib/systemd/systemd</field>
+  </rule>
 </group>
