@@ -16,11 +16,6 @@
 		<field name="crowdsec.alert.message">test alert</field>
 		<description>Test alert for CrowdSec.</description>
 	</rule>
-	<rule id="100004" level="15">
-		<if_sid>100000</if_sid>
-		<field name="crowdsec.alert.remediation">false</field>
-		<description>CrowdSec alert with no remediation: $(crowdsec.alert.message)</description>
-	</rule>
 <!--
 OPENSEARCH EVENT
 -->
