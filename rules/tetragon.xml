@@ -26,7 +26,7 @@
     <decoded_as>json</decoded_as>
     <field name="process_kprobe.parent.binary">/usr/lib/systemd/systemd</field>
   </rule>
-  <rule id="700005" level="0">
+  <rule id="700004" level="0">
     <if_sid>700002</if_sid>
     <description>Suppressing a specific alert. (rabbitmq)</description>
     <decoded_as>json</decoded_as>
