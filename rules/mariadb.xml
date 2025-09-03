@@ -6,7 +6,7 @@
 
 <!-- successful account manipulation -->
   <rule id="111001" level="7">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)GRANT|REVOKE|CREATE USER|DROP USER|RENAME USER</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful account manipulation: $(mariadb.object)</description>
