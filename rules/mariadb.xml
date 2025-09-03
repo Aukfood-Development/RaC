@@ -17,7 +17,7 @@
 
 <!-- successful DROP/TRUNCATE/DELETE execution -->
   <rule id="111002" level="10">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)DROP TABLE|DROP DATABASE|TRUNCATE|DELETE</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful deletion: $(mariadb.object)</description>
@@ -28,7 +28,7 @@
 
 <!-- successful modification-->
   <rule id="111003" level="7">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)ALTER|UPDATE</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful schema/data modification: $(mariadb.object)</description>
@@ -39,7 +39,7 @@
 
 <!-- Unauthorized access to MariaDB server -->
   <rule id="111004" level="5">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.operation" type="pcre2">FAILED_CONNECT</field>
     <description>"MariaDB audit -" Authentication failed: $(mariadb.username)@$(mariadb.userhost)</description>
     <group>authentication_failures,</group>
@@ -50,7 +50,7 @@
 
 <!-- Possible brute force attack -->
   <rule id="111005" level="7" frequency="5" timeframe="30">
-    <if_matched_sid>111104</if_matched_sid>    
+    <if_matched_sid>111004</if_matched_sid>    
     <field name="mariadb.operation" type="pcre2">FAILED_CONNECT</field>
     <same_field>mariadb.userhost</same_field>
     <description>"MariaDB audit -" Possible brute force attack from $(mariadb.username)@$(mariadb.userhost)</description>
@@ -62,7 +62,7 @@
 
 <!-- Data definition operation-->
   <rule id="111006" level="5">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)RENAME</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful data definition operation: $(mariadb.object)</description>
@@ -72,7 +72,7 @@
   </rule>
 
   <rule id="111007" level="5">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)CREATE</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful data definition operation: $(mariadb.object)</description>
@@ -83,7 +83,7 @@
 
 <!-- Data manipulation operation-->
   <rule id="111008" level="5">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)INSERT|MERGE</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful data manipulation operation: $(mariadb.object)</description>
@@ -94,14 +94,14 @@
 
 <!-- successful disconnection from MariaDB server -->
   <rule id="111009" level="3">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.operation">DISCONNECT</field>
     <description>"MariaDB audit -" User session closed: $(mariadb.username)@$(mariadb.userhost)</description>
   </rule>
 
 <!-- successful authentication to MariaDB server -->
   <rule id="111010" level="3">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.operation" type="pcre2">^CONNECT</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful authentication: $(mariadb.username)@$(mariadb.userhost)</description>
@@ -110,7 +110,7 @@
 
 <!-- Data query-->
   <rule id="111011" level="3">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.object" type="pcre2">(?i)SELECT|SHOW|DESCRIBE|USE|EXPLAIN</field>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful data query: $(mariadb.object)</description>
@@ -121,7 +121,7 @@
 
 <!-- Plugin operation -->
 <rule id="111012" level="7">
-  <if_sid>111100</if_sid>
+  <if_sid>111000</if_sid>
   <field name="mariadb.object" type="pcre2">(?i)INSTALL|UNINSTALL|PLUGIN</field>
   <field name="mariadb.retcode" type="pcre2">^0$</field>
   <description>"MariaDB audit -" Plugin operation detected: $(mariadb.object)</description>
@@ -129,14 +129,14 @@
 
 <!-- Execution Error -->
   <rule id="111013" level="3">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.retcode" type="pcre2">(?!0\b)\d+</field>
     <description>"MariaDB audit -" An operation returned error $(mariadb.retcode): $(mariadb.object)</description>
   </rule>
 
 <!-- All other successful operations -->
   <rule id="111014" level="3">
-    <if_sid>111100</if_sid>
+    <if_sid>111000</if_sid>
     <field name="mariadb.retcode" type="pcre2">^0$</field>
     <description>"MariaDB audit -" Successful operation: $(mariadb.object)</description>
   </rule>
