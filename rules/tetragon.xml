@@ -6,7 +6,7 @@
 	<group>process_exec,</group>
 	<description>Process Execution detected</description>
   </rule>
-  <rule id="700002" level="3">
+  <rule id="700002" level="0">
     <decoded_as>json</decoded_as>
     <field name="process_kprobe.process.exec_id">\.*</field>
     <options>no_full_log</options>
