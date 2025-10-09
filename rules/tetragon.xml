@@ -24,7 +24,7 @@
     <group>process_exit,</group>
   </rule>
 
-  <rule id="110003" level="5">
+  <rule id="110003" level="0">
     <if_sid>110000</if_sid>
     <field name="process_kprobe.process.exec_id">\.*</field>
     <description>Kernel event detected.</description>
