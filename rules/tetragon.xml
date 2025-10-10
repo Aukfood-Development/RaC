@@ -240,12 +240,157 @@
   </rule>
   <rule id="110023" level="12" frequency="5" timeframe="60">
     <if_same_source_ip />
-    <if_sid>110031</if_sid>
+    <if_sid>110015</if_sid>
     <description>Multiple capability checks denied for "$(process_kprobe.process.binary)" - Possible privilege escalation attempt</description>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
     </mitre>
     <group>tetragon,capability,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110050" level="5">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">commit_creds</field>
+    <description>Credentials committed for process "$(process_kprobe.process.binary)" - UID: $(process_kprobe.args.uid), GID: $(process_kprobe.args.gid)</description>
+    <mitre>
+      <id>T1548</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_change</group>
+  </rule>
+  <rule id="110051" level="12">
+    <if_sid>110050</if_sid>
+    <field name="process_kprobe.args.uid">^0$</field>
+    <field name="process_kprobe.process.uid">^[1-9]</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" elevated to root (UID 0 from UID $(process_kprobe.process.uid))</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,root_access</group>
+  </rule>
+  <rule id="110052" level="11">
+    <if_sid>110050</if_sid>
+    <field name="process_kprobe.args.cap_effective">\.+</field>
+    <field name="process_kprobe.args.cap_permitted">\.+</field>
+    <description>Capabilities granted to process "$(process_kprobe.process.binary)" - Effective: $(process_kprobe.args.cap_effective)</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,capabilities,privilege_escalation</group>
+  </rule>
+  <rule id="110053" level="10">
+    <if_sid>110050</if_sid>
+    <field name="process_kprobe.args.securebits">SECBIT_NO_SETUID_FIXUP</field>
+    <description>SUID/SGID execution detected: "$(process_kprobe.process.binary)" - Credentials changed via setuid binary</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1053.003</id>
+    </mitre>
+    <group>tetragon,credentials,suid,privilege_escalation</group>
+  </rule>
+  <rule id="110054" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">override_creds</field>
+    <description>Credentials temporarily overridden for process "$(process_kprobe.process.binary)" - New UID: $(process_kprobe.args.uid)</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1134</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_override</group>
+  </rule>
+  <rule id="110055" level="11">
+    <if_sid>110054</if_sid>
+    <field name="process_kprobe.args.uid">^0$</field>
+    <description>Kernel elevated process "$(process_kprobe.process.binary)" to root (override_creds) - Potential privileged operation</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_override,root_access</group>
+  </rule>
+  <rule id="110056" level="3">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">revert_creds</field>
+    <description>Credentials reverted for process "$(process_kprobe.process.binary)" - Restored UID: $(process_kprobe.args.uid)</description>
+    <mitre>
+      <id>T1548</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_revert</group>
+  </rule>
+  <rule id="110057" level="13">
+    <if_sid>110054</if_sid>
+    <field name="process_kprobe.function_name">override_creds</field>
+    <not_same_field>process_kprobe.process.exec_id</not_same_field>
+    <options>no_full_log</options>
+    <description>WARNING: Credentials overridden but not reverted for "$(process_kprobe.process.binary)" - Persistent privilege elevation</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1134.001</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_persistence,suspicious</group>
+  </rule>
+  <rule id="110058" level="10">
+    <if_sid>110051</if_sid>
+    <field name="process_kprobe.process.docker">\.+|process_kprobe.process.pod</field>
+    <description>Container breakout attempt: Process "$(process_kprobe.process.binary)" gained root in namespace</description>
+    <mitre>
+      <id>T1611</id>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,container_escape,privilege_escalation</group>
+  </rule>
+  <rule id="110059" level="14">
+    <if_sid>110051</if_sid>
+    <field name="process_kprobe.process.binary">/tmp/|/dev/shm/|/var/tmp/|\.sh$</field>
+    <description>CRITICAL: Suspicious process "$(process_kprobe.process.binary)" escalated to root - Potential exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+      <id>T1059.004</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit,critical</group>
+  </rule>
+  <rule id="110060" level="15" frequency="3" timeframe="120">
+    <if_same_source_ip />
+    <if_sid>110051</if_sid>
+    <description>ALERT: Multiple privilege escalations detected for "$(process_kprobe.process.binary)" - Active exploit attempt</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+      <id>T1595</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit,active_attack</group>
+  </rule>
+  <rule id="110061" level="11">
+    <if_sid>110050</if_sid>
+    <field name="process_kprobe.args.user_ns">\.+</field>
+    <field name="process_kprobe.args.uid">^0$</field>
+    <description>User namespace changed with root privileges for "$(process_kprobe.process.binary)" - Potential container escape</description>
+    <mitre>
+      <id>T1611</id>
+      <id>T1543</id>
+    </mitre>
+    <group>tetragon,credentials,namespace,container_escape</group>
+  </rule>
+  <rule id="110062" level="9">
+    <if_sid>110051</if_sid>
+    <field name="process_kprobe.process.flags">CLONE_</field>
+    <description>Process cloned with elevated privileges: "$(process_kprobe.process.binary)" spawned child with root access</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1055.012</id>
+    </mitre>
+    <group>tetragon,credentials,process_injection,privilege_escalation</group>
+  </rule>
+  <rule id="110063" level="8">
+    <if_sid>110050</if_sid>
+    <field name="process_kprobe.process.binary">/sbin/modprobe|/sbin/request-key</field>
+    <field name="process_kprobe.args.uid">^0$</field>
+    <description>Kernel executed privileged user-mode helper: "$(process_kprobe.process.binary)" - UMH invocation</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+    </mitre>
+    <group>tetragon,credentials,kernel_helper,privilege_escalation</group>
   </rule>
 </group>
