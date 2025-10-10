@@ -367,7 +367,7 @@
 
   <!-- Multiples accès aux fichiers sensibles -->
   <rule id="120042" level="13" frequency="5" timeframe="300">
-    <if_matched_sid>120020</if_matched_sid>
+    <if_sid>120020</if_sid>
     <description>Multiple sensitive file accesses detected - Reconnaissance or credential harvesting in progress</description>
     <mitre>
       <id>T1003</id>
