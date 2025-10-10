@@ -53,4 +53,199 @@
       <id>T1195.002</id>
     </mitre>
   </rule>
+  <rule id="110006" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">security_kernel_module_request</field>
+    <description>Automatic kernel module loading requested: "$(process_kprobe.args.module_name)"</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+    </mitre>
+    <group>tetragon,kernel_module,rootkit</group>
+  </rule>
+  <rule id="110007" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">security_kernel_read_file</field>
+    <field name="process_kprobe.args.flags">^2$</field>
+    <description>Explicit kernel module loading detected: "$(process_kprobe.args.file_path)" by process "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+    </mitre>
+    <group>tetragon,kernel_module,rootkit</group>
+  </rule>
+  <rule id="110008" level="12">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">find_module_sections</field>
+    <field name="process_kprobe.args.sig_ok">false|0</field>
+    <description>Unsigned kernel module detected: "$(process_kprobe.args.module_name)" - Potential rootkit</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+      <id>T1036</id>
+    </mitre>
+    <group>tetragon,kernel_module,rootkit,unsigned_module</group>
+  </rule>
+  <rule id="110009" level="15">
+    <if_sid>110008</if_sid>
+    <field name="process_kprobe.process.binary">!/usr/sbin/modprobe|/usr/sbin/insmod|/usr/bin/kmod</field>
+    <description>CRITICAL: Unsigned kernel module loaded by suspicious process "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+      <id>T1543.003</id>
+    </mitre>
+    <group>tetragon,kernel_module,rootkit,unsigned_module,critical</group>
+  </rule>
+  <rule id="110010" level="3">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">find_module_sections</field>
+    <field name="process_kprobe.args.sig_ok">true|1</field>
+    <description>Signed kernel module loaded: "$(process_kprobe.args.module_name)"</description>
+    <mitre>
+      <id>T1547.006</id>
+    </mitre>
+    <group>tetragon,kernel_module,signed_module</group>
+  </rule>
+  <rule id="110011" level="13">
+    <if_sid>110007</if_sid>
+    <field name="process_kprobe.args.file_path">/tmp/|/dev/shm/|/var/tmp/</field>
+    <description>Kernel module loaded from suspicious path: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1547.006</id>
+      <id>T1014</id>
+      <id>T1574.006</id>
+    </mitre>
+    <group>tetragon,kernel_module,rootkit,suspicious_path</group>
+  </rule>
+  <rule id="110012" level="5">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">cap_capable</field>
+    <description>Capability check detected: "$(process_kprobe.args.capability)" by process "$(process_kprobe.process.binary)" in namespace</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation</group>
+  </rule>
+  <rule id="110013" level="8">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.return">^-[0-9]+$</field>
+    <description>Capability check DENIED: "$(process_kprobe.args.capability)" for process "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1078</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,denied</group>
+  </rule>
+  <rule id="110014" level="10">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_SYS_ADMIN</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>CRITICAL capability granted: CAP_SYS_ADMIN to process "$(process_kprobe.process.binary)" - Full system control</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1611</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,critical</group>
+  </rule>
+  <rule id="110015" level="12">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_SYS_MODULE</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>CRITICAL capability granted: CAP_SYS_MODULE to "$(process_kprobe.process.binary)" - Can load kernel modules</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1014</id>
+      <id>T1547.006</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,rootkit,critical</group>
+  </rule>
+  <rule id="110016" level="11">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_SYS_RAWIO</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>CRITICAL capability granted: CAP_SYS_RAWIO to "$(process_kprobe.process.binary)" - Direct I/O access</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1006</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,critical</group>
+  </rule>
+  <rule id="110017" level="10">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_SYS_PTRACE</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>Capability granted: CAP_SYS_PTRACE to "$(process_kprobe.process.binary)" - Can trace/debug processes</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1055</id>
+      <id>T1203</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,process_injection</group>
+  </rule>
+  <rule id="110018" level="8">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_NET_ADMIN</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>Network capability granted: CAP_NET_ADMIN to "$(process_kprobe.process.binary)" - Network configuration access</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1601</id>
+    </mitre>
+    <group>tetragon,capability,network,privilege_escalation</group>
+  </rule>
+  <rule id="110019" level="9">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_NET_RAW</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>Network capability granted: CAP_NET_RAW to "$(process_kprobe.process.binary)" - Raw socket access (packet sniffing)</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1040</id>
+    </mitre>
+    <group>tetragon,capability,network,sniffing</group>
+  </rule>
+  <rule id="110020" level="9">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_DAC_OVERRIDE</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>File permission bypass: CAP_DAC_OVERRIDE granted to "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1222</id>
+    </mitre>
+    <group>tetragon,capability,file_permission,privilege_escalation</group>
+  </rule>
+  <rule id="110021" level="8">
+    <if_sid>110012</if_sid>
+    <field name="process_kprobe.args.capability">CAP_SETUID|CAP_SETGID</field>
+    <field name="process_kprobe.return">^0$</field>
+    <description>Identity change capability: "$(process_kprobe.args.capability)" granted to "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1134</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation</group>
+  </rule>
+  <rule id="110022" level="14">
+    <if_sid>110014,110015,110016</if_sid>
+    <field name="process_kprobe.process.binary">/tmp/|/dev/shm/|/var/tmp/|\.sh$</field>
+    <description>ALERT: Critical capability granted to suspicious process "$(process_kprobe.process.binary)" - Capability: "$(process_kprobe.args.capability)"</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1059.004</id>
+      <id>T1036</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,suspicious,critical</group>
+  </rule>
+  <rule id="110023" level="12" frequency="5" timeframe="60">
+    <if_same_source_ip />
+    <if_sid>110031</if_sid>
+    <description>Multiple capability checks denied for "$(process_kprobe.process.binary)" - Possible privilege escalation attempt</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,capability,privilege_escalation,exploit_attempt</group>
+  </rule>
 </group>
