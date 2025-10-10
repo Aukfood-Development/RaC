@@ -1,0 +1,390 @@
+<group name="tetragon,edr,custom">
+
+  <!-- ============================================ -->
+  <!-- RÈGLES POUR sys_execve - EXÉCUTIONS CRITIQUES -->
+  <!-- ============================================ -->
+
+  <!-- Shells interpréteurs -->
+  <rule id="120000" level="5">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/bin/sh$|/bin/bash$|/bin/dash$</field>
+    <description>Shell execution detected: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1059.004</id>
+    </mitre>
+    <group>tetragon,edr,shell_execution</group>
+  </rule>
+
+  <!-- Interpréteurs de scripts (Python, Perl, PHP) -->
+  <rule id="120001" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/python|/usr/bin/python3|/usr/bin/perl|/usr/bin/php</field>
+    <description>Script interpreter executed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1059.006</id>
+    </mitre>
+    <group>tetragon,edr,interpreter_execution</group>
+  </rule>
+
+  <!-- Gestion des utilisateurs et groupes -->
+  <rule id="120002" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/passwd|/usr/sbin/useradd|/usr/sbin/usermod|/usr/sbin/groupadd|/usr/sbin/groupmod</field>
+    <description>User/Group management command executed: "$(process_kprobe.args.filename)" - Args: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1136</id>
+      <id>T1098</id>
+    </mitre>
+    <group>tetragon,edr,user_management,account_manipulation</group>
+  </rule>
+
+  <!-- Commandes réseau (SSH, SCP, SFTP) -->
+  <rule id="120003" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/ssh$|/usr/bin/scp$|/usr/bin/sftp$</field>
+    <description>SSH/SCP command executed: "$(process_kprobe.args.filename)" - Target: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1021.004</id>
+      <id>T1048.002</id>
+    </mitre>
+    <group>tetragon,edr,ssh,remote_access</group>
+  </rule>
+
+  <!-- Netcat (reverse shell indicator) -->
+  <rule id="120004" level="12">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/nc$|/bin/nc$</field>
+    <description>NETCAT executed: "$(process_kprobe.args.filename)" - Potential reverse shell - Args: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1059</id>
+      <id>T1071</id>
+      <id>T1095</id>
+    </mitre>
+    <group>tetragon,edr,netcat,reverse_shell,c2</group>
+  </rule>
+
+  <!-- Téléchargement de fichiers (wget, curl) -->
+  <rule id="120005" level="8">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/wget$|/usr/bin/curl$</field>
+    <description>File download tool executed: "$(process_kprobe.args.filename)" - URL: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1105</id>
+      <id>T1608.001</id>
+    </mitre>
+    <group>tetragon,edr,file_download,ingress_tool_transfer</group>
+  </rule>
+
+  <!-- Telnet (protocole non sécurisé) -->
+  <rule id="120006" level="11">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/telnet$</field>
+    <description>TELNET executed: Insecure protocol usage detected - Target: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1021</id>
+      <id>T1571</id>
+    </mitre>
+    <group>tetragon,edr,telnet,insecure_protocol</group>
+  </rule>
+
+  <!-- Planification de tâches (cron, at) -->
+  <rule id="120007" level="9">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/crontab$|/usr/bin/at$</field>
+    <description>Task scheduling command executed: "$(process_kprobe.args.filename)" - Persistence mechanism</description>
+    <mitre>
+      <id>T1053.003</id>
+      <id>T1053</id>
+    </mitre>
+    <group>tetragon,edr,persistence,scheduled_task</group>
+  </rule>
+
+  <!-- Gestion de services (systemctl, service) -->
+  <rule id="120008" level="8">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/systemctl$|/usr/bin/service$</field>
+    <description>Service management command: "$(process_kprobe.args.filename)" - Action: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1543.002</id>
+      <id>T1569.002</id>
+    </mitre>
+    <group>tetragon,edr,service_management</group>
+  </rule>
+
+  <!-- Élévation de privilèges (sudo, su) -->
+  <rule id="120009" level="9">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/sudo$|/usr/bin/su$</field>
+    <description>Privilege escalation tool executed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1548.003</id>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,edr,privilege_escalation,sudo</group>
+  </rule>
+
+  <!-- Montage de systèmes de fichiers -->
+  <rule id="120010" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/mount$|/usr/bin/umount$</field>
+    <description>Filesystem mount command executed: "$(process_kprobe.args.filename)" - Target: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1005</id>
+    </mitre>
+    <group>tetragon,edr,filesystem,mount</group>
+  </rule>
+
+  <!-- Modification de permissions (chmod, chown) -->
+  <rule id="120011" level="8">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/chmod$|/usr/bin/chown$</field>
+    <description>File permission modification: "$(process_kprobe.args.filename)" - Target: $(process_kprobe.args.argv)</description>
+    <mitre>
+      <id>T1222.002</id>
+    </mitre>
+    <group>tetragon,edr,file_permissions</group>
+  </rule>
+
+  <!-- Compression/Transfert (tar, rsync) -->
+  <rule id="120012" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/bin/tar$|/usr/bin/rsync$</field>
+    <description>Archive/Transfer tool executed: "$(process_kprobe.args.filename)" - Potential data exfiltration</description>
+    <mitre>
+      <id>T1560.001</id>
+      <id>T1048</id>
+    </mitre>
+    <group>tetragon,edr,archive,data_exfiltration</group>
+  </rule>
+
+  <!-- Tetragon/Tetra (manipulation de la sécurité) -->
+  <rule id="120013" level="13">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_execve</field>
+    <field name="process_kprobe.args.filename">/usr/local/bin/tetragon$|/usr/local/bin/tetra$</field>
+    <description>SECURITY TOOL TAMPERING: Tetragon binary executed - Potential security bypass attempt</description>
+    <mitre>
+      <id>T1562.001</id>
+      <id>T1562</id>
+    </mitre>
+    <group>tetragon,edr,security_tampering,defense_evasion</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- RÈGLES POUR sys_openat - ACCÈS FICHIERS SENSIBLES -->
+  <!-- ============================================ -->
+
+  <!-- Fichiers d'authentification (/etc/passwd, /etc/shadow) -->
+  <rule id="120020" level="11">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/passwd$|/etc/shadow$|/etc/group$</field>
+    <description>SENSITIVE FILE ACCESS: "$(process_kprobe.args.filename)" accessed by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1003.008</id>
+      <id>T1552.001</id>
+    </mitre>
+    <group>tetragon,edr,credential_access,sensitive_file</group>
+  </rule>
+
+  <!-- Fichier sudoers -->
+  <rule id="120021" level="12">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/sudoers$</field>
+    <description>SUDOERS FILE ACCESS: "$(process_kprobe.args.filename)" accessed by "$(process_kprobe.process.binary)" - Privilege escalation attempt</description>
+    <mitre>
+      <id>T1548.003</id>
+      <id>T1078.003</id>
+    </mitre>
+    <group>tetragon,edr,privilege_escalation,sudoers</group>
+  </rule>
+
+  <!-- Clés SSH autorisées -->
+  <rule id="120022" level="12">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">authorized_keys$</field>
+    <description>SSH AUTHORIZED_KEYS ACCESS: "$(process_kprobe.args.filename)" accessed by "$(process_kprobe.process.binary)" - Persistence mechanism</description>
+    <mitre>
+      <id>T1098.004</id>
+      <id>T1556</id>
+    </mitre>
+    <group>tetragon,edr,persistence,ssh_keys</group>
+  </rule>
+
+  <!-- Logs d'authentification -->
+  <rule id="120023" level="9">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/var/log/auth.log$</field>
+    <description>Authentication log accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)" - Potential log tampering</description>
+    <mitre>
+      <id>T1070.002</id>
+      <id>T1562.001</id>
+    </mitre>
+    <group>tetragon,edr,log_tampering,defense_evasion</group>
+  </rule>
+
+  <!-- Répertoires cron -->
+  <rule id="120024" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/cron</field>
+    <description>CRON directory accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)" - Persistence setup</description>
+    <mitre>
+      <id>T1053.003</id>
+    </mitre>
+    <group>tetragon,edr,persistence,cron</group>
+  </rule>
+
+  <!-- Services systemd -->
+  <rule id="120025" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/systemd/system</field>
+    <description>SYSTEMD service file accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)" - Service persistence</description>
+    <mitre>
+      <id>T1543.002</id>
+    </mitre>
+    <group>tetragon,edr,persistence,systemd</group>
+  </rule>
+
+  <!-- Configuration SSH -->
+  <rule id="120026" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/ssh/sshd_config$</field>
+    <description>SSH server configuration accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1098.004</id>
+      <id>T1556.004</id>
+    </mitre>
+    <group>tetragon,edr,ssh_config,backdoor</group>
+  </rule>
+
+  <!-- Configuration Apache -->
+  <rule id="120027" level="9">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/apache2/|apache2.conf$</field>
+    <description>Apache configuration accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)" - Potential webshell setup</description>
+    <mitre>
+      <id>T1505.003</id>
+    </mitre>
+    <group>tetragon,edr,apache,webshell</group>
+  </rule>
+
+  <!-- Configuration PHP -->
+  <rule id="120028" level="8">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">php.ini$</field>
+    <description>PHP configuration accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1505.003</id>
+    </mitre>
+    <group>tetragon,edr,php_config</group>
+  </rule>
+
+  <!-- Configuration MySQL -->
+  <rule id="120029" level="10">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/etc/mysql/my.cnf$</field>
+    <description>MySQL configuration accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+    <group>tetragon,edr,mysql_config,database</group>
+  </rule>
+
+  <!-- Répertoire de données MySQL -->
+  <rule id="120030" level="11">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">/var/lib/mysql</field>
+    <description>MySQL data directory accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)" - Potential data theft</description>
+    <mitre>
+      <id>T1003</id>
+      <id>T1005</id>
+    </mitre>
+    <group>tetragon,edr,mysql_data,database,data_theft</group>
+  </rule>
+
+  <!-- Accès au répertoire /tmp -->
+  <rule id="120031" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_openat</field>
+    <field name="process_kprobe.args.filename">^/tmp/</field>
+    <description>Temporary directory accessed: "$(process_kprobe.args.filename)" by "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1105</id>
+    </mitre>
+    <group>tetragon,edr,tmp_access</group>
+  </rule>
+
+  <!-- ============================================ -->
+  <!-- RÈGLES AVANCÉES - CORRÉLATIONS -->
+  <!-- ============================================ -->
+
+  <!-- Webshell: Apache/Nginx accédant à des fichiers système -->
+  <rule id="120040" level="14">
+    <if_sid>120020,120021,120022</if_sid>
+    <field name="process_kprobe.process.binary">apache2|nginx|php-fpm|www-data</field>
+    <description>WEBSHELL ALERT: Web server process "$(process_kprobe.process.binary)" accessed sensitive file "$(process_kprobe.args.filename)"</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1190</id>
+    </mitre>
+    <group>tetragon,edr,webshell,web_attack,critical</group>
+  </rule>
+
+  <!-- Exécution suspecte depuis processus web -->
+  <rule id="120041" level="15">
+    <if_sid>120000,120001,120004,120005</if_sid>
+    <field name="process_kprobe.process.binary">apache2|nginx|php-fpm</field>
+    <description>CRITICAL WEBSHELL: Web server executed suspicious command "$(process_kprobe.args.filename)" - Active exploitation</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1059</id>
+    </mitre>
+    <group>tetragon,edr,webshell,exploitation,critical</group>
+  </rule>
+
+  <!-- Multiples accès aux fichiers sensibles -->
+  <rule id="120042" level="13" frequency="5" timeframe="300">
+    <if_same_source_ip />
+    <if_sid>120020,120021,120022,120023</if_sid>
+    <description>Multiple sensitive file accesses detected - Reconnaissance or credential harvesting in progress</description>
+    <mitre>
+      <id>T1003</id>
+      <id>T1552</id>
+    </mitre>
+    <group>tetragon,edr,credential_dumping,reconnaissance</group>
+  </rule>
+
+  <!-- Chaîne d'attaque: Download → Execute -->
+  <rule id="120043" level="14">
+    <if_sid>120005</if_sid>
+    <description>File downloaded via "$(process_kprobe.args.filename)" - Monitor for execution</description>
+    <mitre>
+      <id>T1105</id>
+    </mitre>
+    <group>tetragon,edr,download_execute,malware_deployment</group>
+  </rule>
+
+</group>
