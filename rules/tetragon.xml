@@ -239,7 +239,6 @@
     <group>tetragon,capability,privilege_escalation,suspicious,critical</group>
   </rule>
   <rule id="110023" level="12" frequency="5" timeframe="60">
-    <if_same_source_ip />
     <if_sid>110015</if_sid>
     <description>Multiple capability checks denied for "$(process_kprobe.process.binary)" - Possible privilege escalation attempt</description>
     <mitre>
@@ -351,7 +350,7 @@
     <group>tetragon,credentials,privilege_escalation,exploit,critical</group>
   </rule>
   <rule id="110060" level="15" frequency="3" timeframe="120">
-    <if_same_source_ip />
+    <same_source_ip />
     <if_sid>110051</if_sid>
     <description>ALERT: Multiple privilege escalations detected for "$(process_kprobe.process.binary)" - Active exploit attempt</description>
     <mitre>
@@ -529,7 +528,7 @@
     <group>tetragon,credentials,privilege_escalation,exploit,suspicious,critical</group>
   </rule>
   <rule id="110084" level="13" frequency="3" timeframe="60">
-    <if_same_source_ip />
+    <same_source_ip />
     <if_sid>110070,110072,110074,110076,110077,110079,110080,110082</if_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <mitre>
@@ -539,7 +538,7 @@
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
   <rule id="110085" level="12" frequency="5" timeframe="120">
-    <if_same_source_ip />
+    <same_source_ip />
     <if_sid>110070,110072</if_sid>
     <description>Repeated credential change attempts by "$(process_kprobe.process.binary)" - Possible brute force or exploit</description>
     <mitre>
@@ -680,7 +679,7 @@
     <group>tetragon,process_exec,container,suspicious,malware</group>
   </rule>
   <rule id="110101" level="12" frequency="10" timeframe="300">
-    <if_same_source_ip />
+    <same_source_ip />
     <if_sid>110091,110092</if_sid>
     <description>Multiple suspicious binaries executed - Possible reconnaissance or malware deployment</description>
     <mitre>
