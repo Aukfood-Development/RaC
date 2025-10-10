@@ -685,16 +685,6 @@
     </mitre>
     <group>tetragon,process_exec,reverse_shell,c2</group>
   </rule>
-  <rule id="110103" level="11">
-    <if_sid>110090</if_sid>
-    <field name="process_kprobe.args.file_path">[^\x00-\x7F]</field>
-    <description>Binary with non-ASCII characters executed: "$(process_kprobe.args.file_path)" - Possible masquerading</description>
-    <mitre>
-      <id>T1036</id>
-      <id>T1027</id>
-    </mitre>
-    <group>tetragon,process_exec,masquerading,unicode</group>
-  </rule>
   <rule id="110104" level="13">
     <if_sid>110090</if_sid>
     <field name="process_kprobe.args.file_age">^[0-5]$</field>
