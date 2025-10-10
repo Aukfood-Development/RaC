@@ -29,7 +29,7 @@
     </mitre>
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
-  <rule id="110084" level="0">
+  <rule id="120004" level="0">
     <if_matched_sid>110084</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/cron$</field>
