@@ -393,4 +393,179 @@
     </mitre>
     <group>tetragon,credentials,kernel_helper,privilege_escalation</group>
   </rule>
+  <rule id="110070" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setuid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed UID to $(process_kprobe.args.uid) via setuid()</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setuid</group>
+  </rule>
+  <rule id="110071" level="12">
+    <if_sid>110070</if_sid>
+    <field name="process_kprobe.args.uid">^0$</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" elevated to root via setuid(0)</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,root_access,syscall</group>
+  </rule>
+  <rule id="110072" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setgid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed GID to $(process_kprobe.args.gid) via setgid()</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setgid</group>
+  </rule>
+  <rule id="110073" level="11">
+    <if_sid>110072</if_sid>
+    <field name="process_kprobe.args.gid">^0$</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" elevated to root group via setgid(0)</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,root_access,syscall</group>
+  </rule>
+  <rule id="110074" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setreuid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed real/effective UID via setreuid($(process_kprobe.args.ruid), $(process_kprobe.args.euid))</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1134</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setreuid</group>
+  </rule>
+  <rule id="110075" level="12">
+    <if_sid>110074</if_sid>
+    <field name="process_kprobe.args.euid">^0$</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" elevated to root via setreuid() - Effective UID: 0</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,root_access,syscall</group>
+  </rule>
+  <rule id="110076" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setregid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed real/effective GID via setregid($(process_kprobe.args.rgid), $(process_kprobe.args.egid))</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setregid</group>
+  </rule>
+  <rule id="110077" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setresuid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed UIDs via setresuid(r:$(process_kprobe.args.ruid), e:$(process_kprobe.args.euid), s:$(process_kprobe.args.suid))</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1134</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setresuid</group>
+  </rule>
+  <rule id="110078" level="13">
+    <if_sid>110077</if_sid>
+    <field name="process_kprobe.args.euid">^0$</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" elevated to root via setresuid() - All UIDs set to 0</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,root_access,syscall</group>
+  </rule>
+  <rule id="110079" level="7">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setresgid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed GIDs via setresgid(r:$(process_kprobe.args.rgid), e:$(process_kprobe.args.egid), s:$(process_kprobe.args.sgid))</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setresgid</group>
+  </rule>
+  <rule id="110080" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setfsuid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed filesystem UID to $(process_kprobe.args.fsuid) via setfsuid()</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setfsuid</group>
+  </rule>
+  <rule id="110081" level="11">
+    <if_sid>110080</if_sid>
+    <field name="process_kprobe.args.fsuid">^0$</field>
+    <description>PRIVILEGE ESCALATION: Process "$(process_kprobe.process.binary)" set filesystem UID to root via setfsuid(0)</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1222</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,filesystem,syscall</group>
+  </rule>
+  <rule id="110082" level="6">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">sys_setfsgid</field>
+    <description>Process "$(process_kprobe.process.binary)" changed filesystem GID to $(process_kprobe.args.fsgid) via setfsgid()</description>
+    <mitre>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,syscall,setfsgid</group>
+  </rule>
+  <rule id="110083" level="14">
+    <if_sid>110071,110073,110075,110078,110081</if_sid>
+    <field name="process_kprobe.process.binary">/tmp/|/dev/shm/|/var/tmp/|\.sh$|perl|python|ruby</field>
+    <description>CRITICAL: Suspicious process "$(process_kprobe.process.binary)" escalated privileges via syscall - Potential exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+      <id>T1059</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit,suspicious,critical</group>
+  </rule>
+  <rule id="110084" level="13" frequency="3" timeframe="60">
+    <if_same_source_ip />
+    <if_sid>110070,110072,110074,110076,110077,110079,110080,110082</if_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110085" level="12" frequency="5" timeframe="120">
+    <if_same_source_ip />
+    <if_sid>110070,110072</if_sid>
+    <description>Repeated credential change attempts by "$(process_kprobe.process.binary)" - Possible brute force or exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1110</id>
+    </mitre>
+    <group>tetragon,credentials,brute_force,exploit_attempt</group>
+  </rule>
+  <rule id="110086" level="13">
+    <if_sid>110071</if_sid>
+    <field name="process_kprobe.function_name">sys_setuid</field>
+    <description>Process "$(process_kprobe.process.binary)" escalated to root then changed group - Exploit behavior pattern</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_pattern</group>
+  </rule>
+  <rule id="110087" level="10">
+    <if_sid>110071,110073,110075,110078</if_sid>
+    <field name="process_kprobe.process.docker">\.+|process_kprobe.process.pod</field>
+    <description>Container privilege escalation: Process "$(process_kprobe.process.binary)" gained root in container namespace</description>
+    <mitre>
+      <id>T1611</id>
+      <id>T1548.001</id>
+    </mitre>
+    <group>tetragon,credentials,container_escape,privilege_escalation</group>
+  </rule>
 </group>
