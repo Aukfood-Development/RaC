@@ -527,7 +527,7 @@
     <group>tetragon,credentials,privilege_escalation,exploit,suspicious,critical</group>
   </rule>
   <rule id="110084" level="13" frequency="3" timeframe="60">
-    <if_matched_sid>110070,110072,110074,110076,110077,110079,110080,110082</if_matched_sid>
+    <if_matched_sid>110070</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <mitre>
       <id>T1548.001</id>
@@ -536,7 +536,7 @@
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
   <rule id="110085" level="12" frequency="5" timeframe="120">
-    <if_matched_sid>110070,110072</if_matched_sid>
+    <if_matched_sid>110070</if_matched_sid>
     <description>Repeated credential change attempts by "$(process_kprobe.process.binary)" - Possible brute force or exploit</description>
     <mitre>
       <id>T1548.001</id>
@@ -615,16 +615,6 @@
     </mitre>
     <group>tetragon,process_exec,obfuscation,suspicious_name</group>
   </rule>
-  <rule id="110095" level="8">
-    <if_sid>110090</if_sid>
-    <field name="process_kprobe.args.file_path">/Downloads/|/Desktop/|/home/\w+/[^/]+\.(bin|elf)$</field>
-    <description>Binary executed from user download directory: "$(process_kprobe.args.file_path)"</description>
-    <mitre>
-      <id>T1204.002</id>
-      <id>T1566</id>
-    </mitre>
-    <group>tetragon,process_exec,user_execution,phishing</group>
-  </rule>
   <rule id="110096" level="13">
     <if_sid>110090</if_sid>
     <field name="process_kprobe.process.binary">/usr/sbin/apache2|/usr/sbin/nginx|php-fpm</field>
@@ -676,7 +666,7 @@
     <group>tetragon,process_exec,container,suspicious,malware</group>
   </rule>
   <rule id="110101" level="12" frequency="10" timeframe="300">
-    <if_matched_sid>110091,110092</if_matched_sid>
+    <if_matched_sid>110091</if_matched_sid>
     <description>Multiple suspicious binaries executed - Possible reconnaissance or malware deployment</description>
     <mitre>
       <id>T1083</id>
@@ -685,7 +675,7 @@
     <group>tetragon,process_exec,reconnaissance,enumeration</group>
   </rule>
   <rule id="110102" level="14">
-    <if_sid>110091,110092</if_sid>
+    <if_sid>110091</if_sid>
     <field name="process_kprobe.args.file_path">nc|ncat|socat|bash|sh|perl|python|ruby</field>
     <description>REVERSE SHELL: Network/interpreter binary executed from suspicious path: "$(process_kprobe.args.file_path)"</description>
     <mitre>
@@ -714,5 +704,95 @@
       <id>T1204.002</id>
     </mitre>
     <group>tetragon,process_exec,dropper,malware_deployment</group>
+  </rule>
+    <rule id="110105" level="12" frequency="10" timeframe="300">
+    <if_matched_sid>110092</if_matched_sid>
+    <description>Multiple suspicious binaries executed - Possible reconnaissance or malware deployment</description>
+    <mitre>
+      <id>T1083</id>
+      <id>T1087</id>
+    </mitre>
+    <group>tetragon,process_exec,reconnaissance,enumeration</group>
+  </rule>
+  <rule id="110106" level="12" frequency="10" timeframe="300">
+    <if_matched_sid>110092</if_matched_sid>
+    <description>Multiple suspicious binaries executed - Possible reconnaissance or malware deployment</description>
+    <mitre>
+      <id>T1083</id>
+      <id>T1087</id>
+    </mitre>
+    <group>tetragon,process_exec,reconnaissance,enumeration</group>
+  </rule>
+  <rule id="110107" level="12" frequency="5" timeframe="120">
+    <if_matched_sid>110072</if_matched_sid>
+    <description>Repeated credential change attempts by "$(process_kprobe.process.binary)" - Possible brute force or exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1110</id>
+    </mitre>
+    <group>tetragon,credentials,brute_force,exploit_attempt</group>
+  </rule>
+  <rule id="110108" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110072</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110109" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110074</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110110" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110076</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110111" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110077</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110112" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110079</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110113" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110080</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+  </rule>
+  <rule id="110114" level="13" frequency="3" timeframe="60">
+    <if_matched_sid>110082</if_matched_sid>
+    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1068</id>
+    </mitre>
+    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
 </group>
