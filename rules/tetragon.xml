@@ -239,7 +239,7 @@
     <group>tetragon,capability,privilege_escalation,suspicious,critical</group>
   </rule>
   <rule id="110023" level="12" frequency="5" timeframe="60">
-    <if_sid>110015</if_sid>
+    <if_matched_sid>110015</if_matched_sid>
     <description>Multiple capability checks denied for "$(process_kprobe.process.binary)" - Possible privilege escalation attempt</description>
     <mitre>
       <id>T1548.001</id>
