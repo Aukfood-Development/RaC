@@ -568,4 +568,156 @@
     </mitre>
     <group>tetragon,credentials,container_escape,privilege_escalation</group>
   </rule>
+  <rule id="110090" level="3">
+    <if_sid>110003</if_sid>
+    <field name="process_kprobe.function_name">security_bprm_creds_from_file</field>
+    <description>ELF binary executed: "$(process_kprobe.args.file_path)" by process "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1059</id>
+    </mitre>
+    <group>tetragon,process_exec,elf_binary</group>
+  </rule>
+  <rule id="110091" level="12">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">/tmp/|/dev/shm/|/var/tmp/|/home/\w+/\.\w+</field>
+    <description>SUSPICIOUS: Binary executed from suspicious path: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1059</id>
+      <id>T1036.005</id>
+      <id>T1204.002</id>
+    </mitre>
+    <group>tetragon,process_exec,suspicious_path,malware</group>
+  </rule>
+  <rule id="110092" level="11">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">/\.\w+/|/home/\w+/\.[^/]+/</field>
+    <description>Binary executed from hidden directory: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1564.001</id>
+      <id>T1059</id>
+    </mitre>
+    <group>tetragon,process_exec,hidden_file,stealth</group>
+  </rule>
+  <rule id="110093" level="14">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">^/dev/(?!shm)</field>
+    <description>CRITICAL: Binary executed from /dev: "$(process_kprobe.args.file_path)" - Fileless malware indicator</description>
+    <mitre>
+      <id>T1059</id>
+      <id>T1027</id>
+      <id>T1070.004</id>
+    </mitre>
+    <group>tetragon,process_exec,fileless_malware,critical</group>
+  </rule>
+  <rule id="110094" level="10">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">[a-f0-9]{32,}|[A-Z0-9]{8,}\.elf$|\.bin$</field>
+    <description>Suspicious binary name detected: "$(process_kprobe.args.file_path)" - Possible obfuscation</description>
+    <mitre>
+      <id>T1036.004</id>
+      <id>T1027</id>
+    </mitre>
+    <group>tetragon,process_exec,obfuscation,suspicious_name</group>
+  </rule>
+  <rule id="110095" level="8">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">/Downloads/|/Desktop/|/home/\w+/[^/]+\.(bin|elf)$</field>
+    <description>Binary executed from user download directory: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1204.002</id>
+      <id>T1566</id>
+    </mitre>
+    <group>tetragon,process_exec,user_execution,phishing</group>
+  </rule>
+  <rule id="110096" level="13">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.process.binary">/usr/sbin/apache2|/usr/sbin/nginx|php-fpm</field>
+    <description>WEBSHELL: Binary executed by web server process: "$(process_kprobe.args.file_path)" from "$(process_kprobe.process.binary)"</description>
+    <mitre>
+      <id>T1505.003</id>
+      <id>T1059</id>
+      <id>T1190</id>
+    </mitre>
+    <group>tetragon,process_exec,webshell,web_attack</group>
+  </rule>
+  <rule id="110097" level="11">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_mode">^[4-7]</field>
+    <description>SUID/SGID binary executed: "$(process_kprobe.args.file_path)" - Privilege escalation vector</description>
+    <mitre>
+      <id>T1548.001</id>
+      <id>T1053.003</id>
+    </mitre>
+    <group>tetragon,process_exec,suid,privilege_escalation</group>
+  </rule>
+  <rule id="110098" level="10">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">^/mnt/|^/media/|^/net/</field>
+    <description>Binary executed from network mount: "$(process_kprobe.args.file_path)" - Lateral movement indicator</description>
+    <mitre>
+      <id>T1021</id>
+      <id>T1570</id>
+    </mitre>
+    <group>tetragon,process_exec,network_mount,lateral_movement</group>
+  </rule>
+  <rule id="110099" level="7">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.process.docker">\.+|process_kprobe.process.pod</field>
+    <description>Binary executed in container: "$(process_kprobe.args.file_path)" - Container: $(process_kprobe.process.docker)</description>
+    <mitre>
+      <id>T1610</id>
+    </mitre>
+    <group>tetragon,process_exec,container</group>
+  </rule>
+  <rule id="110100" level="13">
+    <if_sid>110099</if_sid>
+    <field name="process_kprobe.args.file_path">/tmp/|/dev/shm/|/var/tmp/</field>
+    <description>CONTAINER THREAT: Suspicious binary executed in container: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1610</id>
+      <id>T1059</id>
+    </mitre>
+    <group>tetragon,process_exec,container,suspicious,malware</group>
+  </rule>
+  <rule id="110101" level="12" frequency="10" timeframe="300">
+    <if_same_source_ip />
+    <if_sid>110091,110092</if_sid>
+    <description>Multiple suspicious binaries executed - Possible reconnaissance or malware deployment</description>
+    <mitre>
+      <id>T1083</id>
+      <id>T1087</id>
+    </mitre>
+    <group>tetragon,process_exec,reconnaissance,enumeration</group>
+  </rule>
+  <rule id="110102" level="14">
+    <if_sid>110091,110092</if_sid>
+    <field name="process_kprobe.args.file_path">nc|ncat|socat|bash|sh|perl|python|ruby</field>
+    <description>REVERSE SHELL: Network/interpreter binary executed from suspicious path: "$(process_kprobe.args.file_path)"</description>
+    <mitre>
+      <id>T1059</id>
+      <id>T1071</id>
+      <id>T1048</id>
+    </mitre>
+    <group>tetragon,process_exec,reverse_shell,c2</group>
+  </rule>
+  <rule id="110103" level="11">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_path">[^\x00-\x7F]</field>
+    <description>Binary with non-ASCII characters executed: "$(process_kprobe.args.file_path)" - Possible masquerading</description>
+    <mitre>
+      <id>T1036</id>
+      <id>T1027</id>
+    </mitre>
+    <group>tetragon,process_exec,masquerading,unicode</group>
+  </rule>
+  <rule id="110104" level="13">
+    <if_sid>110090</if_sid>
+    <field name="process_kprobe.args.file_age">^[0-5]$</field>
+    <description>Recently created binary executed: "$(process_kprobe.args.file_path)" - Dropper activity</description>
+    <mitre>
+      <id>T1105</id>
+      <id>T1204.002</id>
+    </mitre>
+    <group>tetragon,process_exec,dropper,malware_deployment</group>
+  </rule>
 </group>
