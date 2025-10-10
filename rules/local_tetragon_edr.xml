@@ -366,16 +366,15 @@
   </rule>
 
   <!-- Multiples accès aux fichiers sensibles -->
-    <rule id="120042" level="13" frequency="5" timeframe="300">
-        <if_matched>120020,120021,120022,120023</if_matched>
-        <same_source_ip />
-        <description>Multiple sensitive file accesses detected - Reconnaissance or credential harvesting in progress</description>
-        <mitre>
-        <id>T1003</id>
-        <id>T1552</id>
-        </mitre>
-        <group>tetragon,edr,credential_dumping,reconnaissance</group>
-    </rule>
+  <rule id="120042" level="13" frequency="5" timeframe="300">
+    <if_matched_sid>120020</if_matched_sid>
+    <description>Multiple sensitive file accesses detected - Reconnaissance or credential harvesting in progress</description>
+    <mitre>
+      <id>T1003</id>
+      <id>T1552</id>
+    </mitre>
+    <group>tetragon,edr,credential_dumping,reconnaissance</group>
+  </rule>
 
   <!-- Chaîne d'attaque: Download → Execute -->
   <rule id="120043" level="14">
