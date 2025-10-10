@@ -1,38 +1,38 @@
 <group name="tetragon,">
-  <rule id="110111" level="0" overwrite="yes">
+  <rule id="120001" level="0">
+    <if_matched_sid>110111</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
     </mitre>
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
-  <rule id="110112" level="0" overwrite="yes">
+  <rule id="120002" level="0">
+    <if_matched_sid>110112</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
     </mitre>
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
-  <rule id="110084" level="0" overwrite="yes">
+  <rule id="120003" level="0">
+    <if_matched_sid>110084</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
     </mitre>
     <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
   </rule>
-  <rule id="110084" level="0" overwrite="yes">
+  <rule id="110084" level="0">
+    <if_matched_sid>110084</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/cron$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
