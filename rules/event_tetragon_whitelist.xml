@@ -1,42 +1,26 @@
 <group name="tetragon,">
   <rule id="120001" level="2">
-    <if_sid>110111</if_sid>
-    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <if_matched_sid>110111</if_matched_sid>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <mitre>
-      <id>T1548.001</id>
-      <id>T1068</id>
-    </mitre>
-    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+    <description>Credential changes by exim4 - Expected behavior</description>
+    <group>tetragon,credentials</group>
   </rule>
   <rule id="120002" level="2">
-    <if_sid>110112</if_sid>
-    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <if_matched_sid>110112</if_matched_sid>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <mitre>
-      <id>T1548.001</id>
-      <id>T1068</id>
-    </mitre>
-    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+    <description>Credential changes by exim4 - Expected behavior</description>
+    <group>tetragon,credentials</group>
   </rule>
   <rule id="120003" level="2">
-    <if_sid>110084</if_sid>
-    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <if_matched_sid>110084</if_matched_sid>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <mitre>
-      <id>T1548.001</id>
-      <id>T1068</id>
-    </mitre>
-    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+    <description>Credential changes by exim4 - Expected behavior</description>
+    <group>tetragon,credentials</group>
   </rule>
   <rule id="120004" level="2">
-    <if_sid>110084</if_sid>
-    <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
+    <if_matched_sid>110084</if_matched_sid>
     <field name="process_kprobe.process.binary">^/usr/sbin/cron$</field>
-    <mitre>
-      <id>T1548.001</id>
-      <id>T1068</id>
-    </mitre>
-    <group>tetragon,credentials,privilege_escalation,exploit_attempt</group>
+    <description>Credential changes by cron - Expected behavior</description>
+    <group>tetragon,credentials</group>
   </rule>
 </group>
