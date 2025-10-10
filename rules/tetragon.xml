@@ -317,7 +317,7 @@
     <group>tetragon,credentials,privilege_revert</group>
   </rule>
   <rule id="110057" level="13">
-    <if_sid>110054</if_sid>
+    <if_matched_sid>110054</if_matched_sid>
     <field name="process_kprobe.function_name">override_creds</field>
     <not_same_field>process_kprobe.process.exec_id</not_same_field>
     <options>no_full_log</options>
