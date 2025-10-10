@@ -1,6 +1,6 @@
 <group name="tetragon,">
   <rule id="120001" level="2">
-    <if_sid>110111<if_sid>
+    <if_sid>110111</if_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
     <mitre>
