@@ -3,7 +3,6 @@
     <if_matched_sid>110111</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
@@ -14,7 +13,6 @@
     <if_matched_sid>110112</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
@@ -25,7 +23,6 @@
     <if_matched_sid>110084</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/exim4$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
@@ -36,7 +33,6 @@
     <if_matched_sid>110084</if_matched_sid>
     <description>Multiple credential changes detected for "$(process_kprobe.process.binary)" - Possible privilege escalation exploit</description>
     <field name="process_kprobe.process.binary">^/usr/sbin/cron$</field>
-    <noalert>1</noalert>
     <mitre>
       <id>T1548.001</id>
       <id>T1068</id>
