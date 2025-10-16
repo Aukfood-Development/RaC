@@ -1,6 +1,6 @@
 <group name="tetragon,">
   <rule id="120001" level="2">
-    <if_sid>110077</if_sid>
+    <if_sid>110111</if_sid>
     <field name="process_kprobe.process.binary">/usr/sbin/exim4$</field>
     <description>Credential changes by exim4 - Expected behavior</description>
     <group>tetragon,credentials</group>
